@@ -253,7 +253,7 @@ h4{margin:22px 0 4px;font-size:16px}
 
   <section id="licitacoes">
     <h2>Licitações: o que a Câmara e a Prefeitura compraram</h2>
-    <p class="sub">Compras publicadas no Portal Nacional de Contratações Públicas (PNCP): o que foi comprado, de quem e por quanto. Nos materiais, o preço que Sorocaba pagou aparece ao lado do que outras cidades de Mato Grosso pagaram por item parecido.</p>
+    <p class="sub">Compras publicadas no Portal Nacional de Contratações Públicas (PNCP): o que foi comprado, de quem e por quanto.</p>
     <div class="nums" id="licNums"></div>
     <div class="abas" id="licAbas">
       <button data-aba="cmp" class="on">Preço comparado</button>
@@ -849,9 +849,8 @@ var por={'Câmara':{n:0,h:0},'Prefeitura':{n:0,h:0}};
 L.compras.forEach(function(c){ var o=por[c.o]; if(o){ o.n++; o.h+=c.h||0; } });
 $('licNums').innerHTML=[
   [por['Câmara'].n,'compras da Câmara'],[brl(por['Câmara'].h),'homologado pela Câmara'],
-  [por['Prefeitura'].n,'compras da Prefeitura'],[brl(por['Prefeitura'].h),'homologado pela Prefeitura'],
-  [L.comparados.length,'itens com preço comparado']
-].map(function(x){return '<div class="num"><b>'+x[0]+'</b><small>'+x[1]+'</small></div>';}).join('');
+  [por['Prefeitura'].n,'compras da Prefeitura'],[brl(por['Prefeitura'].h),'homologado pela Prefeitura']
+].concat(L.base_itens ? [[L.comparados.length,'itens com preço comparado']] : []).map(function(x){return '<div class="num"><b>'+x[0]+'</b><small>'+x[1]+'</small></div>';}).join('');
 $('licNums').insertAdjacentHTML('afterend','<p class="nota" style="margin-top:10px">Desde '+dt(L.desde)+'. <b>Homologado não é o mesmo que pago</b>: em registro de preço, o valor é um teto, e a Prefeitura compra só o que precisar ao longo do ano. Licitações ainda sem resultado publicado ficam sem valor homologado.</p>');
 
 // abas
@@ -861,6 +860,7 @@ $('licAbas').querySelectorAll('button').forEach(function(b){ b.onclick=function(
 
 // 1) preco comparado
 (function(){
+  if(!L.base_itens){ $('lic-cmp').innerHTML='<div class="vazio">A comparação de preço com outras cidades ainda não está disponível para esta cidade. As compras, os itens e os fornecedores estão nas outras abas.</div>'; return; }
   var C=L.comparados.slice().sort(function(a,b){return b.df-a.df;});
   var acima=C.filter(function(x){return x.df>=30;}).length, abaixo=C.filter(function(x){return x.df<=-10;}).length;
   var h='<div class="aviso">Comparação automática, por semelhança do texto do item: <b>não é prova de preço errado</b>. Marca, qualidade, quantidade, prazo e frete mudam o preço. '+
